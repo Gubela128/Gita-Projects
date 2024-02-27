@@ -24,34 +24,50 @@ def hangman():
     while True:
         print("\n" + display_word(word_to_guess, guessed_letters))
         print("Attempts left:", attempts)
-        guess = input("Guess a letter: ").lower()
+        guess = input("Guess a letter or the full word: ").lower()
 
-        if not guess.isalpha() or len(guess) != 1:
-            print("Please enter a single letter.")
+        if not guess.isalpha():
+            print("Please enter a letter or a word.")
             continue
 
-        if guess in guessed_letters:
-            print("You already guessed that letter!")
-            continue
-        elif guess in word_to_guess:
-            print("Correct!")
-            guessed_letters.append(guess)
-            if set(word_to_guess) == set(guessed_letters):
-                print("\nCongratulations! You guessed the word:", word_to_guess)
-                return  # Terminate the function immediately after correct guess
+        if len(guess) == 1:
+            if guess in guessed_letters:
+                print("You already guessed that letter!")
+                continue
+            elif guess in word_to_guess:
+                print("Correct!")
+                guessed_letters.append(guess)
+                if all(letter in guessed_letters for letter in word_to_guess):
+                    print("\nCongratulations! You guessed the word:", word_to_guess)
+                    play_again = input("\nDo you want to play again? (yes/no): ").lower()
+                    if play_again == "yes":
+                        hangman()
+                    else:
+                        print("Thank you for playing Hangman!")
+                        return  # Terminate the function immediately after correct guess
+            else:
+                print("Incorrect!")
+                guessed_letters.append(guess)
+                if guess not in word_to_guess:
+                    attempts -= 1
+                if attempts == 0:
+                    print("\nYou ran out of attempts! The word was:", word_to_guess)
+                    break
         else:
-            print("Incorrect!")
-            guessed_letters.append(guess)
-            if guess not in word_to_guess:
+            if guess == word_to_guess:
+                print("\nCongratulations! You guessed the word:", word_to_guess)
+                play_again = input("\nDo you want to play again? (yes/no): ").lower()
+                if play_again == "yes":
+                    hangman()
+                else:
+                    print("Thank you for playing Hangman!")
+                    return  # Terminate the function immediately after correct guess
+            else:
+                print("Incorrect!")
                 attempts -= 1
-            if attempts == 0:
-                print("\nYou ran out of attempts! The word was:", word_to_guess)
-                break
+                if attempts == 0:
+                    print("\nYou ran out of attempts! The word was:", word_to_guess)
+                    break
 
-    play_again = input("\nDo you want to play again? (yes/no): ").lower()
-    if play_again == "yes":
-        hangman()
-    else:
-        print("Thank you for playing Hangman!")
-
-hangman()
+if __name__ == "__main__":
+    hangman()
